@@ -18,13 +18,13 @@ kafkaConnect:
   enabled: true
   image: confluentinc/cp-kafka-connect:7.4.0
   plugins:
-  - debezium/debezium-connector-postgres:2.3
+    - debezium/debezium-connector-postgres:2.3
 
 # Kafka Topics
 topics:
-- name: my-topic
-  partitions: 3
-  replicas: 3
+  - name: my-topic
+    partitions: 3
+    replicas: 3
 
 # Kafka Connector Configuration
 kafkaConnector:
@@ -32,7 +32,7 @@ kafkaConnector:
   connectorClass: io.debezium.connector.postgresql.PostgresConnector
   tasksMax: 1
   config:
-    database.hostname: haproxy-service # HAProxy service name
+    database.hostname: 192.168.1.65
     database.port: 5000 # HAProxy port
     database.user: postgres
     database.password: postgres
