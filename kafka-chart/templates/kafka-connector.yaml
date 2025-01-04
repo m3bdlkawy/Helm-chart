@@ -1,0 +1,20 @@
+{{- if .Values.kafkaConnector.enabled }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: my-postgres-connector
+  labels:
+    strimzi.io/cluster: my-kafka-connect
+spec:
+  class: {{ .Values.kafkaConnector.connectorClass }}
+  tasksMax: {{ .Values.kafkaConnector.tasksMax }}
+  config:
+    database.hostname: {{ .Values.kafkaConnector.config.database.hostname }}
+    database.port: {{ .Values.kafkaConnector.config.database.port }}
+    database.user: {{ .Values.kafkaConnector.config.database.user }}
+    database.password: {{ .Values.kafkaConnector.config.database.password }}
+    database.dbname: {{ .Values.kafkaConnector.config.database.dbname }}
+    database.server.name: {{ .Values.kafkaConnector.config.database.server.name }}
+    table.whitelist: {{ .Values.kafkaConnector.config.table.whitelist }}
+    plugin.name: {{ .Values.kafkaConnector.config.plugin.name }}
+{{- end }}

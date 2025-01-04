@@ -1,0 +1,28 @@
+{{- if .Values.kafkaConnect.enabled }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: {{ include "kafka-cluster.kafkaConnect.name" . }}
+spec:
+  replicas: 2
+  image: {{ .Values.kafkaConnect.image }}
+  bootstrapServers: {{ include "kafka-cluster.kafka.bootstrapServers" . }} {{- # Use helper function -}}
+  config:
+    group.id: connect-cluster
+    offset.storage.topic: connect-cluster-offsets
+    config.storage.topic: connect-cluster-configs
+    status.storage.topic: connect-cluster-status
+    config.storage.replication.factor: 3
+    offset.storage.replication.factor: 3
+    status.storage.replication.factor: 3
+  build:
+    plugins:
+      - name: debezium-postgres
+        artifacts:
+          - type: tgz
+            url: {{ index .Values.kafkaConnect.plugins 0 }}
+  template:
+    pod:
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+{{- end }}

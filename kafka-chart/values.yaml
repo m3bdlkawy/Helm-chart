@@ -1,0 +1,42 @@
+# Kafka Configuration
+replicas: 3
+image: confluentinc/cp-kafka:7.4.0
+kraft:
+  enabled: true
+
+# Node Selector for Master Nodes
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+
+# Storage Configuration (Longhorn)
+storage:
+  size: 10Gi
+  class: longhorn-kafka # Longhorn StorageClass
+
+# Kafka Connect Configuration
+kafkaConnect:
+  enabled: true
+  image: confluentinc/cp-kafka-connect:7.4.0
+  plugins:
+  - debezium/debezium-connector-postgres:2.3
+
+# Kafka Topics
+topics:
+- name: my-topic
+  partitions: 3
+  replicas: 3
+
+# Kafka Connector Configuration
+kafkaConnector:
+  enabled: true
+  connectorClass: io.debezium.connector.postgresql.PostgresConnector
+  tasksMax: 1
+  config:
+    database.hostname: haproxy-service # HAProxy service name
+    database.port: 5000 # HAProxy port
+    database.user: postgres
+    database.password: postgres
+    database.dbname: mydb
+    database.server.name: mydb
+    table.whitelist: public.mytable
+    plugin.name: pgoutput

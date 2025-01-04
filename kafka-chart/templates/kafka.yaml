@@ -1,0 +1,47 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ include "kafka-cluster.fullname" . }}
+spec:
+  kafka:
+    version: 3.4.0
+    replicas: {{ .Values.replicas }}
+    image: {{ .Values.image }}
+    config:
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      default.replication.factor: 3
+      min.insync.replicas: 2
+      inter.broker.protocol.version: "3.4"
+    storage:
+      type: jbod
+      volumes:
+      - id: 0
+        type: persistent-claim
+        size: {{ .Values.storage.size }}
+        class: {{ include "kafka-cluster.storage.class" . }} {{- # Use helper function -}}
+    rack:
+      topologyKey: kubernetes.io/hostname
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+      - name: tls
+        port: 9093
+        type: internal
+        tls: true
+    authorization:
+      type: simple
+    kraft:
+      enabled: {{ .Values.kraft.enabled }}
+    template:
+      pod:
+        nodeSelector:
+          {{- toYaml .Values.nodeSelector | nindent 10 }}
+  zookeeper:
+    replicas: 0
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
