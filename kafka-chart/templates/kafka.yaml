@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
-  name: {{ include "kafka-cluster.fullname" . }}
+  name: my-kafka-cluster
 spec:
   kafka:
     version: 3.4.0
@@ -20,7 +20,7 @@ spec:
       - id: 0
         type: persistent-claim
         size: {{ .Values.storage.size }}
-        class: {{ include "kafka-cluster.storage.class" . }} {{- # Use helper function -}}
+        class: {{ .Values.storage.class }} # Longhorn StorageClass
     rack:
       topologyKey: kubernetes.io/hostname
     listeners:
