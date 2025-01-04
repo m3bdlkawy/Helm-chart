@@ -2,11 +2,11 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnect
 metadata:
-  name: {{ include "kafka-cluster.kafkaConnect.name" . }}
+  name: my-kafka-connect
 spec:
   replicas: 2
   image: {{ .Values.kafkaConnect.image }}
-  bootstrapServers: {{ include "kafka-cluster.kafka.bootstrapServers" . }} {{- # Use helper function -}}
+  bootstrapServers: my-kafka-cluster-kafka-bootstrap:9092
   config:
     group.id: connect-cluster
     offset.storage.topic: connect-cluster-offsets
